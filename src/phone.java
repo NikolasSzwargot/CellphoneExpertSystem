@@ -4,9 +4,7 @@ import java.awt.event.*;
 
 import java.text.BreakIterator;
 
-import java.util.Locale;
-import java.util.ResourceBundle;
-import java.util.MissingResourceException;
+import java.util.*;
 
 import CLIPSJNI.*;
 
@@ -268,7 +266,8 @@ class Phone implements ActionListener
                                     public void run()
                                     {
                                         try
-                                        { nextUIState(); }
+                                        { nextUIState();
+                                          logCLIPSInfo();}
                                         catch (Exception e)
                                         { e.printStackTrace(); }
                                     }
@@ -393,4 +392,19 @@ class Phone implements ActionListener
                     public void run() { new Phone(); }
                 });
     }
+
+    /* Dodana metoda do logowania informacji */
+
+    /*******************/
+    /* logCLIPSInfo */
+    /*******************/
+    public void logCLIPSInfo() {
+        // Pobierz informacje o wykonaniu CLIPS (na przykład listę faktów)
+        PrimitiveValue executionInfo = clips.eval("(facts)");
+
+        // Wyświetl informacje o wykonaniu CLIPS w konsoli
+        System.out.println("CLIPS Execution Info:");
+        System.out.println(executionInfo.toString());
+    }
+
 }
