@@ -125,8 +125,7 @@
 
 (defrule determine-rules ""
 
-   (or (logical (never-looks-up-is NeverLooksUp1Answer))
-   (logical (urgent-calls-is UrgentCalls2Answer)))
+   (logical (never-looks-up-is NeverLooksUp1Answer))
 
    =>
 
@@ -468,21 +467,4 @@
       
    (str-assert (str-cat "(" ?relation ")"))
    
-   (retract ?f1))   
-
-(defrule handle-prev
-
-   (declare (salience 10))
-      
-   ?f1 <- (prev ?id)
-   
-   ?f2 <- (state-list (sequence $?b ?id ?p $?e))
-                
-   =>
-   
-   (retract ?f1)
-   
-   (modify ?f2 (current ?p))
-   
-   (halt))
-
+   (retract ?f1))
