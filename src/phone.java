@@ -4,9 +4,7 @@ import java.awt.event.*;
 
 import java.text.BreakIterator;
 
-import java.util.Locale;
-import java.util.ResourceBundle;
-import java.util.MissingResourceException;
+import java.util.*;
 
 import CLIPSJNI.*;
 
@@ -46,7 +44,6 @@ class Phone implements ActionListener
 {
     JLabel displayLabel;
     JButton nextButton;
-    JButton prevButton;
     JPanel choicesPanel;
     ButtonGroup choicesButtons;
     ResourceBundle phoneResources;
@@ -112,11 +109,6 @@ class Phone implements ActionListener
 
         JPanel buttonPanel = new JPanel();
 
-        prevButton = new JButton(phoneResources.getString("Prev"));
-        prevButton.setActionCommand("Prev");
-        buttonPanel.add(prevButton);
-        prevButton.addActionListener(this);
-
         nextButton = new JButton(phoneResources.getString("Next"));
         nextButton.setActionCommand("Next");
         buttonPanel.add(nextButton);
@@ -171,26 +163,23 @@ class Phone implements ActionListener
         PrimitiveValue fv = clips.eval(evalStr).get(0);
 
         /*========================================*/
-        /* Determine the Next/Prev button states. */
+        /* Determine the Next button state. */
         /*========================================*/
 
         if (fv.getFactSlot("state").toString().equals("final"))
         {
             nextButton.setActionCommand("Restart");
             nextButton.setText(phoneResources.getString("Restart"));
-            prevButton.setVisible(true);
         }
         else if (fv.getFactSlot("state").toString().equals("initial"))
         {
             nextButton.setActionCommand("Next");
             nextButton.setText(phoneResources.getString("Next"));
-            prevButton.setVisible(false);
         }
         else
         {
             nextButton.setActionCommand("Next");
             nextButton.setText(phoneResources.getString("Next"));
-            prevButton.setVisible(true);
         }
 
         /*=====================*/
@@ -268,7 +257,8 @@ class Phone implements ActionListener
                                     public void run()
                                     {
                                         try
-                                        { nextUIState(); }
+                                        { nextUIState();
+                                          logCLIPSInfo();}
                                         catch (Exception e)
                                         { e.printStackTrace(); }
                                     }
@@ -319,11 +309,6 @@ class Phone implements ActionListener
         else if (ae.getActionCommand().equals("Restart"))
         {
             clips.reset();
-            runPhone();
-        }
-        else if (ae.getActionCommand().equals("Prev"))
-        {
-            clips.assertString("(prev " + currentID + ")");
             runPhone();
         }
     }
@@ -393,4 +378,15 @@ class Phone implements ActionListener
                     public void run() { new Phone(); }
                 });
     }
+
+    /*******************/
+    /* logCLIPSInfo */
+    /*******************/
+    public void logCLIPSInfo() {
+        PrimitiveValue executionInfo = clips.eval("(facts)");
+
+        System.out.println("CLIPS Execution Info:");
+        System.out.println(executionInfo.toString());
+    }
+
 }

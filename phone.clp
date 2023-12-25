@@ -125,8 +125,7 @@
 
 (defrule determine-rules ""
 
-   (or (logical (never-looks-up-is NeverLooksUp1Answer))
-   (logical (urgent-calls-is UrgentCalls2Answer)))
+   (logical (never-looks-up-is NeverLooksUp1Answer))
 
    =>
 
@@ -134,6 +133,18 @@
                      (relation-asserted rules-is)
                      (response Rules1Answer)
                      (valid-answers Rules1Answer Rules2Answer))))
+
+(defrule determine-rules-loop ""
+
+   ?f1 <- (urgent-calls-is UrgentCalls2Answer)
+
+   =>
+
+   (assert (UI-state (display RulesQuestion)
+                     (relation-asserted rules-is)
+                     (response Rules1Answer)
+                     (valid-answers Rules1Answer Rules2Answer)))
+                     (retract ?f1))
 
 (defrule determine-losing-phone ""
 
@@ -198,14 +209,16 @@
 
 (defrule determine-urgent-calls ""
 
-   (logical (rules-is Rules1Answer))
+   ?f1 <- (rules-is Rules1Answer)
 
    =>
-
    (assert (UI-state (display UrgentCallsQuestion)
                      (relation-asserted urgent-calls-is)
                      (response UrgentCalls1Answer)
-                     (valid-answers UrgentCalls1Answer UrgentCalls2Answer))))
+                     (valid-answers UrgentCalls1Answer UrgentCalls2Answer)))
+           (retract ?f1))
+
+
 
 (defrule determine-human-child ""
 
@@ -229,7 +242,7 @@
    (assert (UI-state (display LostPhoneQuestion)
                      (relation-asserted lost-phone-is)
                      (response LostPhone1Answer)
-                     (valid-answers LostPhone1Answer LosLostPhone2AnsweringPhone2Answer))))
+                     (valid-answers LostPhone1Answer LostPhone2Answer))))
 
 (defrule determine-apple-care ""
 
@@ -275,7 +288,7 @@
 (defrule dont-get-phone-conclusions ""
 
    (or (logical (whining-is Whining2Answer))
-   (logical (apple-care-is AppleCare1Answer))
+   (logical (apple-care-is AppleCare1Answer)))
    
    =>
 
@@ -422,7 +435,9 @@
       then
       (modify ?f2 (response ?response)))
       
-   (assert (add-response ?id ?response)))   
+   (assert (add-response ?id ?response)))
+
+
 
 (defrule handle-add-response
 
@@ -452,21 +467,4 @@
       
    (str-assert (str-cat "(" ?relation ")"))
    
-   (retract ?f1))   
-
-(defrule handle-prev
-
-   (declare (salience 10))
-      
-   ?f1 <- (prev ?id)
-   
-   ?f2 <- (state-list (sequence $?b ?id ?p $?e))
-                
-   =>
-   
-   (retract ?f1)
-   
-   (modify ?f2 (current ?p))
-   
-   (halt))
-   
+   (retract ?f1))
