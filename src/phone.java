@@ -56,7 +56,7 @@ class Phone implements ActionListener
     {
         try
         {
-            phoneResources = ResourceBundle.getBundle("resources.PhoneResources",Locale.getDefault());
+            phoneResources = ResourceBundle.getBundle("resources.phoneResources",Locale.getDefault());
         }
         catch (MissingResourceException mre)
         {
