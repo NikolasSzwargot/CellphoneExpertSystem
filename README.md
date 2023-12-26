@@ -4,6 +4,7 @@
 ## Authors
 
 Lena Woźniak 151904
+
 Nikolas Szwargot 151735
 
 # Launch and Installation
